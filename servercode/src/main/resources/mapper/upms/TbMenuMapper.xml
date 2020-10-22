@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tdysj.dorm.modules.upms.mapper.TbMenuMapper">
+
+    <insert id="insert" parameterType="com.tdysj.dorm.modules.upms.entity.TbMenu">
+        INSERT INTO tb_menu (
+        `id`,
+        `parent_id`,
+        `name`,
+        `sort`,
+        `url`,
+        `permission`,
+        `type`,
+        `icon`
+        ) VALUES (
+        #{id},
+        #{parentId},
+        #{name},
+        (SELECT CASE WHEN max(sm.sort) IS NULL THEN 1 ELSE max(sm.sort) + 1 END FROM tb_menu sm where sm.parent_id = #{parentId}),
+        #{url},
+        #{permission},
+        #{type},
+        #{icon}
+        )
+    </insert>
+
+    <select id="listPermissionByRoleIds" resultType="string">
+        SELECT DISTINCT sm.permission
+        FROM tb_menu sm, tb_role_menu srm
+        WHERE sm.id = srm.menu_id  AND sm.permission is not null AND sm.permission != "" AND srm.role_id IN (#{roleIds})
+    </select>
+
+</mapper>

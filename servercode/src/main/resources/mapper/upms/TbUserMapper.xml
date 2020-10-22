@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tdysj.dorm.modules.upms.mapper.TbUserMapper">
+    <sql id="userVoSql">
+        su.`id`,
+        su.`created_by`,
+        su.`created_time`,
+        su.`salt`,
+        su.`updated_by`,
+        su.`updated_time`,
+        su.`del_flag`,
+        su.`username`,
+        su.`password`,
+        sr.`id` 'role_id',
+        sr.`name` 'role_name',
+        sr.`role_sign` 'role_role_sign'
+    </sql>
+    <resultMap id="userVoMap" type="com.tdysj.dorm.modules.upms.vo.UserVo">
+        <id column="id" property="id"></id>
+        <result column="created_by" property="createdBy"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="updated_by" property="updatedBy"></result>
+        <result column="updated_time" property="updatedTime"></result>
+        <result column="del_flag" property="delFlag"></result>
+        <result column="remarks" property="remarks"></result>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="salt" property="salt"></result>
+        <collection property="roleList" ofType="com.tdysj.dorm.modules.upms.entity.TbRole">
+            <id column="role_id" property="id"></id>
+            <result column="role_name" property="name"></result>
+            <result column="role_role_sign" property="roleSign"></result>
+        </collection>
+    </resultMap>
+
+
+    <select id="getUserVoByUsername" resultMap="userVoMap">
+        SELECT
+        <include refid="userVoSql"/>
+        FROM tb_user su
+        LEFT JOIN tb_user_role sur on sur.`user_id` = su.`id`
+        LEFT JOIN tb_role sr on sur.`role_id` = sr.`id`
+        WHERE su.username = #{username}
+    </select>
+
+</mapper>
